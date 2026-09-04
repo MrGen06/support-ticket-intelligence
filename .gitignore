@@ -1,0 +1,11 @@
+.env
+venv/
+__pycache__/
+*.pyc
+.kaggle/
+.ipynb_checkpoints/
+data/raw/*
+models/**/*.safetensors
+models/**/*.bin
+.pytest_cache/
+.DS_Store
