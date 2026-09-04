@@ -1,0 +1,11 @@
+{
+    "Product Support": 0,
+    "Sales and Pre-Sales": 1,
+    "Technical Support": 2,
+    "Customer Service": 3,
+    "Returns and Exchanges": 4,
+    "Human Resources": 5,
+    "Service Outages and Maintenance": 6,
+    "Billing and Payments": 7,
+    "IT Support": 8
+}
