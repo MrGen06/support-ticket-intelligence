@@ -2,6 +2,7 @@ import os
 import requests
 import streamlit as st
 import pandas as pd
+from datetime import datetime
 
 st.set_page_config(
     page_title="Support Ticket AI",
@@ -9,6 +10,20 @@ st.set_page_config(
 )
 
 st.title("AI Support Ticket Intelligence")
+
+st.markdown(
+    """
+    <style>
+    [data-testid="stMetricValue"] {
+        font-size: clamp(1rem, 2.2vw, 1.75rem);
+        line-height: 1.2;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 subject = st.text_input("Ticket Subject")
 body = st.text_area("Ticket Description", height=180)
@@ -35,9 +50,21 @@ if st.button("Analyze Ticket"):
                 c3.metric("ML Latency", f"{data['ml_latency_ms']:.0f} ms")
                 
                 st.subheader("SLA Deadline")
-                # Handle dictionary format returned by our FastAPI SLA engine
-                deadline = data["sla"]["deadline"] if isinstance(data["sla"], dict) else data["sla"]
-                st.write(deadline)
+                sla_info = data["sla"] if isinstance(data["sla"], dict) else {
+                    "deadline": data["sla"],
+                    "sla_hours": None,
+                }
+                deadline = datetime.fromisoformat(sla_info["deadline"])
+                deadline_text = (
+                    f"{deadline.strftime('%b')} {deadline.day}, {deadline.year} at "
+                    f"{deadline.strftime('%I:%M:%S %p').lstrip('0')} UTC"
+                )
+                deadline_col, duration_col = st.columns(2)
+                deadline_col.metric("Respond by", deadline_text)
+                if sla_info["sla_hours"] is not None:
+                    duration_col.metric("SLA window", f"{sla_info['sla_hours']} hours")
+                with st.expander("View exact timestamp"):
+                    st.code(sla_info["deadline"])
                 
                 st.subheader("AI Summary & Response")
                 st.write(data["response_draft"])

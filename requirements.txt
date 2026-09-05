@@ -11,3 +11,4 @@ streamlit
 requests
 groq
 python-dotenv
+google-generativeai
