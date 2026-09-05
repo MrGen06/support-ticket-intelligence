@@ -12,7 +12,7 @@ class LLMAssistant:
             print("WARNING: GROQ_API_KEY is not set correctly in .env!")
             
         self.client = Groq(api_key=api_key)
-        self.model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+        self.model = os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b")
 
     def assist(self, ticket, queue, priority, sla):
         prompt = f"""You are a customer support assistant.
@@ -37,7 +37,8 @@ Do not claim an action was completed."""
                 messages=[
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.2
+                temperature=0.2,
+                max_tokens=300  # Caps expected output to stay within Groq free-tier OTPM limits
             )
             return response.choices[0].message.content
         except Exception as e:
